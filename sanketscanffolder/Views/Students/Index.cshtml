@@ -1,0 +1,102 @@
+﻿@model IEnumerable<sanketscanffolder.Models.Student>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Action
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Stuent_Name)               
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Age)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+                <td>
+                    <input type="radio" name="studentSelect" value="@item.Id" class="student-radio" />
+                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stuent_Name)
+                @Html.Hidden("studentName_" + item.Id, item.Stuent_Name, new { @class = "student-name" })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Age)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                @* <a asp-action="Details" asp-route-id="@item.Id">Details</a> | *@
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+<h2>Semester Details</h2>
+<div id="semesterGridContainer">
+    <!-- Semester table will be loaded here -->
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@* <script>
+    $(document).on('change', 'input[name="studentSelect"]', function () {
+        var studentId = $(this).val();
+        window.location.href = '/Semesters/Index?studentId=' + studentId;
+
+        // $.ajax({
+        //     url: '/Semesters/Index',
+        //     type: 'GET',
+        //     data: { studentId: studentId },
+        //     success: function (response) {
+        //         // You can either render a partial view result or update the second datagrid manually
+        //         $('#semesterGridContainer').html(response); // Make sure this container exists in your view
+        //     },
+        //     error: function (err) {
+        //         console.error("Error fetching semester details", err);
+        //     }
+        // });
+    });
+</script> *@
+
+<script>
+    $(document).on('change', 'input[name="studentSelect"]', function () {
+        var studentId = $(this).val();
+        var studentName = $('#studentName_' + studentId).val();
+        $.ajax({
+            url: '/Students/GetByStudent',
+            type: 'GET',
+            data: { studentId: studentId, studentName: studentName },
+            success: function (response) {
+                $('#semesterGridContainer').html(response);
+            },
+            error: function (err) {
+                console.error("Error fetching semester details", err);
+            }
+        });
+    });
+</script>
